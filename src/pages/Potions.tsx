@@ -10,11 +10,11 @@ const DOSES = [1, 2, 3, 4] as const;
 
 function nameCellBg(volume: number, mean: number, minVol: number, maxVol: number): React.CSSProperties {
   if (volume < mean && mean > minVol) {
-    const alpha = (((mean - volume) / (mean - minVol)) * 0.3).toFixed(3);
+    const alpha = (Math.sqrt((mean - volume) / (mean - minVol)) * 0.2).toFixed(3);
     return { backgroundColor: `rgba(239, 68, 68, ${alpha})` };
   }
   if (volume > mean && maxVol > mean) {
-    const alpha = (((volume - mean) / (maxVol - mean)) * 0.3).toFixed(3);
+    const alpha = (Math.sqrt((volume - mean) / (maxVol - mean)) * 0.2).toFixed(3);
     return { backgroundColor: `rgba(34, 197, 94, ${alpha})` };
   }
   return {};
