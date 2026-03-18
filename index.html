@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Flipperino — OSRS Grand Exchange Flipping Tool</title>
+    <meta name="description" content="Find Grand Exchange hijinks in Old School RuneScape. Powered by the OSRS Wiki API." />
+    <meta name="theme-color" content="#863bff" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Flipperino — OSRS Grand Exchange Flipping Tool" />
+    <meta property="og:description" content="Find Grand Exchange hijinks in OSRS. Powered by the OSRS Wiki API." />
+    <!-- Accessibility -->
+    <meta name="color-scheme" content="light dark" />
+    <script>
+      (function () {
+        const stored = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (stored === 'dark' || (!stored && prefersDark)) {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
