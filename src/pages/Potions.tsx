@@ -51,7 +51,9 @@ export default function Potions() {
       const indicators: Partial<Record<1 | 2 | 3 | 4, string>> = {};
       for (const { dose, ppd } of ppds) {
         const ratio = meanPpd > 0 ? ppd / meanPpd : 1;
-        if (ratio > 1.05) indicators[dose] = '🗑️';
+        if (ratio > 1.30) indicators[dose] = '🗑️🗑️🗑️';
+        else if (ratio > 1.15) indicators[dose] = '🗑️🗑️';
+        else if (ratio > 1.05) indicators[dose] = '🗑️';
         else if (ratio < 0.70) indicators[dose] = '🔥🔥🔥';
         else if (ratio < 0.85) indicators[dose] = '🔥🔥';
         else if (ratio < 0.95) indicators[dose] = '🔥';

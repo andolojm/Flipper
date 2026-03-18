@@ -22,7 +22,9 @@ export default function VolumeLegend({ pivot, showDoseEmojis = false }: VolumeLe
           <div>🔥🔥🔥 &gt;30% below avg price/dose</div>
           <div>🔥🔥 15–30% below avg price/dose</div>
           <div>🔥 5–15% below avg price/dose</div>
-          <div>🗑️ &gt;5% above avg price/dose</div>
+          <div>🗑️🗑️🗑️ &gt;30% above avg price/dose</div>
+          <div>🗑️🗑️ 15–30% above avg price/dose</div>
+          <div>🗑️ 5–15% above avg price/dose</div>
         </div>
       )}
     </div>
