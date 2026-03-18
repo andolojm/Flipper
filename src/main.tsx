@@ -9,6 +9,7 @@ import ItemDetail from './pages/ItemDetail.tsx'
 import TopMargins from './pages/TopMargins.tsx'
 import ItemSets from './pages/ItemSets.tsx'
 import Alchemy from './pages/Alchemy.tsx'
+import Potions from './pages/Potions.tsx'
 import ErrorBoundary from './components/ErrorBoundary.tsx'
 import ErrorScreen from './components/ErrorScreen.tsx'
 import SplashScreen from './components/SplashScreen.tsx'
@@ -33,6 +34,7 @@ createRoot(document.getElementById('root')!).render(
             <Route path="top-margins" element={<TopMargins />} />
             <Route path="item-sets" element={<ItemSets />} />
             <Route path="alchemy" element={<Alchemy />} />
+            <Route path="potions" element={<Potions />} />
           </Route>
         </Routes>
       </BrowserRouter>
