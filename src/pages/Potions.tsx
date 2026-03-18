@@ -77,9 +77,11 @@ export default function Potions() {
 
   return (
     <div className="p-6">
-      <div className="flex items-stretch gap-3 mb-1">
-        <BackButton />
-        <h2 className="text-4xl font-semibold text-violet-600 dark:text-violet-400">Potions</h2>
+      <div className="flex items-start gap-3 mb-1">
+        <div className="flex items-stretch gap-3">
+          <BackButton />
+          <h2 className="text-4xl font-semibold text-violet-600 dark:text-violet-400">Potions</h2>
+        </div>
         <div className="flex-1" />
         <VolumeLegend pivot="mean" showDoseEmojis />
       </div>
