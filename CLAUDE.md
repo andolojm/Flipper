@@ -2,4 +2,4 @@
 
 ## Git workflow
 
-Commit and push to `origin main` after every prompt that results in a code change, no matter how small.
+Commit and push to `origin master` after every prompt that results in a code change, no matter how small.
