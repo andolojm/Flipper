@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { Link } from 'react-router';
-import BackButton from '@/components/BackButton';
+import PageHeader from '@/components/PageHeader';
 import VolumeLegend from '@/components/VolumeLegend';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { latestPricesQuery, mappingQuery, oneHourPricesQuery } from '@/lib/queries';
@@ -84,15 +84,11 @@ export default function ItemSets() {
 
   return (
     <div className="p-6">
-      <div className="flex items-stretch gap-3 mb-1">
-        <BackButton />
-        <h2 className="text-4xl font-semibold text-violet-600 dark:text-violet-400">Item Sets</h2>
-        <div className="flex-1" />
-        <VolumeLegend pivot="45th percentile" />
-      </div>
-      <p className="text-zinc-500 dark:text-zinc-400 mb-10">
-        Best margins for building and destroying item sets, sorted by highest opportunity.
-      </p>
+      <PageHeader
+        title="Item Sets"
+        subtitle="Best margins for building and destroying item sets, sorted by highest opportunity."
+        legend={<VolumeLegend pivot="45th percentile" />}
+      />
 
       <div className="overflow-x-auto">
         <table className="w-full text-sm">

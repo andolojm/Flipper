@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import BackButton from '@/components/BackButton';
+import PageHeader from '@/components/PageHeader';
 import VolumeLegend from '@/components/VolumeLegend';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { latestPricesQuery, fiveMinPricesQuery } from '@/lib/queries';
@@ -77,17 +77,11 @@ export default function Potions() {
 
   return (
     <div className="p-6">
-      <div className="flex items-start gap-3 mb-1">
-        <div className="flex items-stretch gap-3">
-          <BackButton />
-          <h2 className="text-4xl font-semibold text-violet-600 dark:text-violet-400">Potions</h2>
-        </div>
-        <div className="flex-1" />
-        <VolumeLegend pivot="mean" showDoseEmojis />
-      </div>
-      <p className="text-zinc-500 dark:text-zinc-400 mb-10">
-        Latest GE prices for each dose of every tradeable potion. Decant via Bob Barter at the Grand Exchange.
-      </p>
+      <PageHeader
+        title="Potions"
+        subtitle="Latest GE prices for each dose of every tradeable potion. Decant via Bob Barter at the Grand Exchange."
+        legend={<VolumeLegend pivot="mean" showDoseEmojis />}
+      />
 
       <div className="overflow-x-auto">
         <table className="w-full text-sm">

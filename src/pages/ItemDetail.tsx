@@ -1,5 +1,5 @@
 import { useParams } from 'react-router';
-import BackButton from '@/components/BackButton';
+import PageHeader from '@/components/PageHeader';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { mappingQuery, latestPricesQuery, fiveMinPricesQuery, oneHourPricesQuery } from '@/lib/queries';
 import type { MappingItem, LatestPricesResponse, AvgPricesResponse } from '@/types/osrs';
@@ -22,10 +22,7 @@ export default function ItemDetail() {
 
   return (
     <div className="p-6 max-w-lg">
-      <div className="flex items-stretch gap-3 mb-1">
-        <BackButton />
-        <h2 className="text-2xl font-semibold text-violet-600 dark:text-violet-400">{item.name}</h2>
-      </div>
+      <PageHeader title={item.name} titleSize="text-2xl" />
       <p className="text-muted-foreground mb-6">{item.examine}</p>
 
       <section className="mb-6">

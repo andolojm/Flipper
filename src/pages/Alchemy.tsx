@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import BackButton from '@/components/BackButton';
+import PageHeader from '@/components/PageHeader';
 import VolumeLegend from '@/components/VolumeLegend';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { mappingQuery, latestPricesQuery, fiveMinPricesQuery, oneHourPricesQuery } from '@/lib/queries';
@@ -76,15 +76,11 @@ export default function Alchemy() {
 
   return (
     <div className="p-6">
-      <div className="flex items-stretch gap-3 mb-1">
-        <BackButton />
-        <h2 className="text-4xl font-semibold text-violet-600 dark:text-violet-400">Alchemy</h2>
-        <div className="flex-1" />
-        <VolumeLegend pivot="mean" />
-      </div>
-      <p className="text-zinc-500 dark:text-zinc-400 mb-10">
-        Top 50 items by High Alchemy profit. Nature rune cost included.
-      </p>
+      <PageHeader
+        title="Alchemy"
+        subtitle="Top 50 items by High Alchemy profit. Nature rune cost included."
+        legend={<VolumeLegend pivot="mean" />}
+      />
 
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
