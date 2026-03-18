@@ -41,8 +41,20 @@ export default function Potions() {
         }
       }
 
+      // Price-per-dose indicators: compare each dose's ppd against the mean ppd
+      const ppds = DOSES.flatMap((d) => prices[d] != null ? [{ dose: d, ppd: prices[d]! / d }] : []);
+      const meanPpd = ppds.length > 0 ? ppds.reduce((s, x) => s + x.ppd, 0) / ppds.length : 0;
+      const indicators: Partial<Record<1 | 2 | 3 | 4, string>> = {};
+      for (const { dose, ppd } of ppds) {
+        const ratio = meanPpd > 0 ? ppd / meanPpd : 1;
+        if (ratio > 1.05) indicators[dose] = '🗑️';
+        else if (ratio < 0.70) indicators[dose] = '🔥🔥🔥';
+        else if (ratio < 0.85) indicators[dose] = '🔥🔥';
+        else if (ratio < 0.95) indicators[dose] = '🔥';
+      }
+
       const avgVolume = doseCount > 0 ? totalVolume / doseCount : 0;
-      return { potion, prices, avgVolume };
+      return { potion, prices, indicators, avgVolume };
     });
   }, [latest, fiveMin]);
 
@@ -78,7 +90,7 @@ export default function Potions() {
             </tr>
           </thead>
           <tbody>
-            {rows.map(({ potion, prices, avgVolume }) => (
+            {rows.map(({ potion, prices, indicators, avgVolume }) => (
               <tr key={potion.name} className="border-b border-border/50 hover:bg-muted/40 transition-colors">
                 <td
                   className="py-2 pl-4 pr-8"
@@ -88,7 +100,12 @@ export default function Potions() {
                 </td>
                 {DOSES.map((d) => (
                   <td key={d} className="py-2 pr-6 text-right tabular-nums">
-                    {prices[d] != null ? `${prices[d]!.toLocaleString()} gp` : '—'}
+                    {prices[d] != null ? (
+                      <span className="inline-flex items-center justify-end gap-1">
+                        {indicators[d] && <span>{indicators[d]}</span>}
+                        {prices[d]!.toLocaleString()} gp
+                      </span>
+                    ) : '—'}
                   </td>
                 ))}
               </tr>
