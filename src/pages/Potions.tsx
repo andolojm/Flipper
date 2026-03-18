@@ -30,13 +30,17 @@ export default function Potions() {
       let totalVolume = 0;
       let doseCount = 0;
 
+      const doseVolumes: Partial<Record<1 | 2 | 3 | 4, number>> = {};
+
       for (const dose of DOSES) {
         const id = potion.doses[dose];
         if (id != null) {
           const p = latest.data[String(id)];
           if (p?.high != null) prices[dose] = p.high;
           const vol = fiveMin.data[String(id)];
-          totalVolume += (vol?.highPriceVolume ?? 0) + (vol?.lowPriceVolume ?? 0);
+          const v = (vol?.highPriceVolume ?? 0) + (vol?.lowPriceVolume ?? 0);
+          doseVolumes[dose] = v;
+          totalVolume += v;
           doseCount++;
         }
       }
@@ -54,16 +58,20 @@ export default function Potions() {
       }
 
       const avgVolume = doseCount > 0 ? totalVolume / doseCount : 0;
-      return { potion, prices, indicators, avgVolume };
+      return { potion, prices, indicators, doseVolumes, avgVolume };
     });
   }, [latest, fiveMin]);
 
-  const { mean, minVol, maxVol } = useMemo(() => {
-    const volumes = rows.map((r) => r.avgVolume);
+  const { nameMean, nameMin, nameMax, doseMean, doseMin, doseMax } = useMemo(() => {
+    const avgVols = rows.map((r) => r.avgVolume);
+    const allDoseVols = rows.flatMap((r) => Object.values(r.doseVolumes));
     return {
-      mean: volumes.reduce((a, b) => a + b, 0) / volumes.length,
-      minVol: Math.min(...volumes),
-      maxVol: Math.max(...volumes),
+      nameMean: avgVols.reduce((a, b) => a + b, 0) / avgVols.length,
+      nameMin: Math.min(...avgVols),
+      nameMax: Math.max(...avgVols),
+      doseMean: allDoseVols.reduce((a, b) => a + b, 0) / allDoseVols.length,
+      doseMin: Math.min(...allDoseVols),
+      doseMax: Math.max(...allDoseVols),
     };
   }, [rows]);
 
@@ -90,16 +98,18 @@ export default function Potions() {
             </tr>
           </thead>
           <tbody>
-            {rows.map(({ potion, prices, indicators, avgVolume }) => (
+            {rows.map(({ potion, prices, indicators, doseVolumes, avgVolume }) => (
               <tr key={potion.name} className="border-b border-border/50 hover:bg-muted/40 transition-colors">
                 <td
                   className="py-2 pl-4 pr-8"
-                  style={nameCellBg(avgVolume, mean, minVol, maxVol)}
+                  style={nameCellBg(avgVolume, nameMean, nameMin, nameMax)}
                 >
                   {potion.name}
                 </td>
                 {DOSES.map((d) => (
-                  <td key={d} className="py-2 pr-6 text-right tabular-nums">
+                  <td key={d} className="py-2 pr-6 text-right tabular-nums"
+                    style={doseVolumes[d] != null ? nameCellBg(doseVolumes[d]!, doseMean, doseMin, doseMax) : undefined}
+                  >
                     {prices[d] != null ? (
                       <span className="inline-flex items-center justify-end gap-1">
                         {indicators[d] && <span>{indicators[d]}</span>}
