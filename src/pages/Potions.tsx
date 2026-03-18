@@ -81,7 +81,7 @@ export default function Potions() {
         <BackButton />
         <h2 className="text-4xl font-semibold text-violet-600 dark:text-violet-400">Potions</h2>
         <div className="flex-1" />
-        <VolumeLegend pivot="mean" />
+        <VolumeLegend pivot="mean" showDoseEmojis />
       </div>
       <p className="text-zinc-500 dark:text-zinc-400 mb-10">
         Latest GE prices for each dose of every tradeable potion. Decant via Bob Barter at the Grand Exchange.

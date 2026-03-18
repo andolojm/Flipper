@@ -1,9 +1,10 @@
 interface VolumeLegendProps {
   /** Short description of the pivot point, e.g. "45th percentile" or "mean" */
   pivot: string;
+  showDoseEmojis?: boolean;
 }
 
-export default function VolumeLegend({ pivot }: VolumeLegendProps) {
+export default function VolumeLegend({ pivot, showDoseEmojis = false }: VolumeLegendProps) {
   return (
     <div className="self-center text-right text-xs text-muted-foreground">
       <div className="text-[10px] uppercase tracking-wider mb-1.5">Trade Volume</div>
@@ -16,6 +17,14 @@ export default function VolumeLegend({ pivot }: VolumeLegendProps) {
         <span>High</span>
       </div>
       <div className="text-[10px] mt-1 text-muted-foreground/60">transparent at {pivot}</div>
+      {showDoseEmojis && (
+        <div className="mt-2 space-y-0.5 text-[10px] text-muted-foreground/60">
+          <div>🔥🔥🔥 &gt;30% below avg price/dose</div>
+          <div>🔥🔥 15–30% below avg price/dose</div>
+          <div>🔥 5–15% below avg price/dose</div>
+          <div>🗑️ &gt;5% above avg price/dose</div>
+        </div>
+      )}
     </div>
   );
 }
