@@ -8,16 +8,21 @@ import { POTIONS } from '@/data/potions';
 
 const DOSES = [1, 2, 3, 4] as const;
 
-function nameCellBg(volume: number, mean: number, minVol: number, maxVol: number): React.CSSProperties {
-  if (volume < mean && mean > minVol) {
-    const alpha = (Math.sqrt((mean - volume) / (mean - minVol)) * 0.2).toFixed(3);
+function cellBg(value: number, mean: number, min: number, max: number): React.CSSProperties {
+  if (value < mean && mean > min) {
+    const alpha = (Math.sqrt((mean - value) / (mean - min)) * 0.2).toFixed(3);
     return { backgroundColor: `rgba(239, 68, 68, ${alpha})` };
   }
-  if (volume > mean && maxVol > mean) {
-    const alpha = (Math.sqrt((volume - mean) / (maxVol - mean)) * 0.2).toFixed(3);
+  if (value > mean && max > mean) {
+    const alpha = (Math.sqrt((value - mean) / (max - mean)) * 0.2).toFixed(3);
     return { backgroundColor: `rgba(34, 197, 94, ${alpha})` };
   }
   return {};
+}
+
+// Log-scale wrapper: spreads low values apart for better colour fidelity
+function doseCellBg(volume: number, logMean: number, logMin: number, logMax: number): React.CSSProperties {
+  return cellBg(Math.log1p(volume), logMean, logMin, logMax);
 }
 
 export default function Potions() {
@@ -64,16 +69,16 @@ export default function Potions() {
     });
   }, [latest, fiveMin]);
 
-  const { nameMean, nameMin, nameMax, doseMean, doseMin, doseMax } = useMemo(() => {
+  const { nameMean, nameMin, nameMax, logDoseMean, logDoseMin, logDoseMax } = useMemo(() => {
     const avgVols = rows.map((r) => r.avgVolume);
-    const allDoseVols = rows.flatMap((r) => Object.values(r.doseVolumes));
+    const logDoseVols = rows.flatMap((r) => Object.values(r.doseVolumes)).map(Math.log1p);
     return {
       nameMean: avgVols.reduce((a, b) => a + b, 0) / avgVols.length,
       nameMin: Math.min(...avgVols),
       nameMax: Math.max(...avgVols),
-      doseMean: allDoseVols.reduce((a, b) => a + b, 0) / allDoseVols.length,
-      doseMin: Math.min(...allDoseVols),
-      doseMax: Math.max(...allDoseVols),
+      logDoseMean: logDoseVols.reduce((a, b) => a + b, 0) / logDoseVols.length,
+      logDoseMin: Math.min(...logDoseVols),
+      logDoseMax: Math.max(...logDoseVols),
     };
   }, [rows]);
 
@@ -100,13 +105,13 @@ export default function Potions() {
               <tr key={potion.name} className="border-b border-border/50 hover:bg-muted/40 transition-colors">
                 <td
                   className="py-2 pl-4 pr-8"
-                  style={nameCellBg(avgVolume, nameMean, nameMin, nameMax)}
+                  style={cellBg(avgVolume, nameMean, nameMin, nameMax)}
                 >
                   {potion.name}
                 </td>
                 {DOSES.map((d) => (
                   <td key={d} className="py-2 pr-6 text-right tabular-nums"
-                    style={doseVolumes[d] != null ? nameCellBg(doseVolumes[d]!, doseMean, doseMin, doseMax) : undefined}
+                    style={doseVolumes[d] != null ? doseCellBg(doseVolumes[d]!, logDoseMean, logDoseMin, logDoseMax) : undefined}
                   >
                     {prices[d] != null ? (
                       <span className="inline-flex items-center justify-end gap-1">
