@@ -42,7 +42,8 @@ export default function HerbCleaning() {
     return mapping.flatMap((grimyItem): HerbRow[] => {
       if (!grimyItem.name.startsWith('Grimy ')) return [];
 
-      const cleanName = grimyItem.name.slice('Grimy '.length);
+      const suffix = grimyItem.name.slice('Grimy '.length);
+      const cleanName = suffix.charAt(0).toUpperCase() + suffix.slice(1);
       const cleanItem = nameToItem.get(cleanName);
       if (!cleanItem) return [];
 
