@@ -6,7 +6,7 @@ import type { LatestPricesResponse, AvgPricesResponse } from '@/types/osrs';
 import PageHeader from '@/components/PageHeader';
 import VolumeLegend from '@/components/VolumeLegend';
 
-function rowBg(volume: number, mean: number, minVol: number, maxVol: number): React.CSSProperties {
+function cellBg(volume: number, mean: number, minVol: number, maxVol: number): React.CSSProperties {
   if (volume < mean && mean > minVol) {
     const alpha = (Math.sqrt((mean - volume) / (mean - minVol)) * 0.25).toFixed(3);
     return { backgroundColor: `rgba(239, 68, 68, ${alpha})` };
@@ -36,28 +36,33 @@ export default function Poison() {
       const profit = poisonedHigh - totalCost;
       const marginPct = (profit / totalCost) * 100;
 
-      const h1 = oneHour.data[String(item.baseId)];
-      const volume = (h1?.highPriceVolume ?? 0) + (h1?.lowPriceVolume ?? 0);
+      const h1Base = oneHour.data[String(item.baseId)];
+      const h1Poisoned = oneHour.data[String(item.poisonedId)];
+      const baseVolume = (h1Base?.highPriceVolume ?? 0) + (h1Base?.lowPriceVolume ?? 0);
+      const poisonedVolume = (h1Poisoned?.highPriceVolume ?? 0) + (h1Poisoned?.lowPriceVolume ?? 0);
 
-      return [{ item, baseLow, poisonedHigh, poisonCostPerItem, profit, marginPct, volume }];
+      return [{ item, baseLow, poisonedHigh, profit, marginPct, baseVolume, poisonedVolume }];
     }).sort((a, b) => b.marginPct - a.marginPct);
   }, [latest, oneHour]);
 
-  const { mean, minVol, maxVol } = useMemo(() => {
+  // Separate stats for base and poisoned volumes
+  const baseStats = useMemo(() => {
     if (rows.length === 0) return { mean: 0, minVol: 0, maxVol: 0 };
-    const vols = rows.map((r) => r.volume);
-    return {
-      mean: vols.reduce((a, b) => a + b, 0) / vols.length,
-      minVol: Math.min(...vols),
-      maxVol: Math.max(...vols),
-    };
+    const vols = rows.map((r) => r.baseVolume);
+    return { mean: vols.reduce((a, b) => a + b, 0) / vols.length, minVol: Math.min(...vols), maxVol: Math.max(...vols) };
+  }, [rows]);
+
+  const poisonedStats = useMemo(() => {
+    if (rows.length === 0) return { mean: 0, minVol: 0, maxVol: 0 };
+    const vols = rows.map((r) => r.poisonedVolume);
+    return { mean: vols.reduce((a, b) => a + b, 0) / vols.length, minVol: Math.min(...vols), maxVol: Math.max(...vols) };
   }, [rows]);
 
   return (
     <div className="p-6">
       <PageHeader
         title="Poison"
-        subtitle="Profit from poisoning weapons and ammo with Weapon Poison++. Row color indicates 1h trade volume of the base item."
+        subtitle="Profit from poisoning weapons and ammo with Weapon Poison++. Cell color indicates 1h trade volume."
         legend={<VolumeLegend pivot="mean" />}
       />
 
@@ -74,10 +79,9 @@ export default function Poison() {
             </tr>
           </thead>
           <tbody>
-            {rows.map(({ item, baseLow, poisonedHigh, profit, marginPct, volume }) => (
+            {rows.map(({ item, baseLow, poisonedHigh, profit, marginPct, baseVolume, poisonedVolume }) => (
               <tr
                 key={item.baseId}
-                style={rowBg(volume, mean, minVol, maxVol)}
                 className="border-b border-border/50 hover:bg-muted/40 transition-colors"
               >
                 <td className="py-2 pl-4 pr-8">
@@ -91,10 +95,16 @@ export default function Poison() {
                   </a>
                 </td>
                 <td className="py-2 pr-8 text-right tabular-nums">{item.quantity}</td>
-                <td className="hidden sm:table-cell py-2 pr-8 text-right tabular-nums">
+                <td
+                  className="hidden sm:table-cell py-2 pr-8 text-right tabular-nums"
+                  style={cellBg(baseVolume, baseStats.mean, baseStats.minVol, baseStats.maxVol)}
+                >
                   {baseLow.toLocaleString()} gp
                 </td>
-                <td className="hidden sm:table-cell py-2 pr-8 text-right tabular-nums">
+                <td
+                  className="hidden sm:table-cell py-2 pr-8 text-right tabular-nums"
+                  style={cellBg(poisonedVolume, poisonedStats.mean, poisonedStats.minVol, poisonedStats.maxVol)}
+                >
                   {poisonedHigh.toLocaleString()} gp
                 </td>
                 <td className="hidden sm:table-cell py-2 pr-8 text-right tabular-nums font-medium">
