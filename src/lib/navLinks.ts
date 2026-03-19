@@ -4,4 +4,5 @@ export const navLinks = [
   { to: '/alchemy', label: 'Alchemy', description: 'Top 50 items by High Alchemy profit. Row color indicates trade volume.' },
   { to: '/potions', label: 'Potions', description: 'Latest GE prices for each dose of every tradeable potion.' },
   { to: '/poison', label: 'Poison', description: 'Profit margins for poisoning weapons and ammo with Weapon Poison++.' },
+  { to: '/herb-cleaning', label: 'Herb Cleaning', description: 'Margins for cleaning grimy herbs manually or via Zahur (200gp/herb).' },
 ];
