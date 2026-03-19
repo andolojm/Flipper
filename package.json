@@ -9,11 +9,12 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "format": "prettier --write .",
-    "generate": "node scripts/generate-item-wiki-urls.js && node scripts/generate-item-set-ids.js && node scripts/generate-item-set-components.js && node scripts/generate-potions.js",
+    "generate": "node scripts/generate-item-wiki-urls.js && node scripts/generate-item-set-ids.js && node scripts/generate-item-set-components.js && node scripts/generate-potions.js && node scripts/generate-poisonable-items.js",
     "generate:item-wiki-urls": "node scripts/generate-item-wiki-urls.js",
     "generate:item-set-ids": "node scripts/generate-item-set-ids.js",
     "generate:item-set-components": "node scripts/generate-item-set-components.js",
-    "generate:potions": "node scripts/generate-potions.js"
+    "generate:potions": "node scripts/generate-potions.js",
+    "generate:poisonable-items": "node scripts/generate-poisonable-items.js"
   },
   "dependencies": {
     "@base-ui/react": "^1.3.0",

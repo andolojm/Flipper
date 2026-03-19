@@ -3,4 +3,5 @@ export const navLinks = [
   { to: '/item-sets', label: 'Item Sets', description: 'Best margins for building and destroying item sets. Row color indicates trade volume.' },
   { to: '/alchemy', label: 'Alchemy', description: 'Top 50 items by High Alchemy profit. Row color indicates trade volume.' },
   { to: '/potions', label: 'Potions', description: 'Latest GE prices for each dose of every tradeable potion.' },
+  { to: '/poison', label: 'Poison', description: 'Profit margins for poisoning weapons and ammo with Weapon Poison++.' },
 ];
