@@ -11,13 +11,6 @@ const NATURE_RUNE_ID = 561;
 
 type Filter = 'all' | 'has-1h' | 'has-5m' | 'top-25pct' | 'top-10pct';
 
-const FILTER_OPTIONS: { label: string; value: Filter }[] = [
-  { label: 'All items', value: 'all' },
-  { label: 'Has 1h buy', value: 'has-1h' },
-  { label: 'Has 5m buy', value: 'has-5m' },
-  { label: 'Top 25% volume', value: 'top-25pct' },
-  { label: 'Top 10% volume', value: 'top-10pct' },
-];
 
 function rowBg(volume: number, mean: number, minVol: number, maxVol: number) {
   if (volume < mean && mean > minVol) {
@@ -77,6 +70,20 @@ export default function Alchemy() {
       .sort((a, b) => b.marginPct - a.marginPct);
   }, [mapping, latest, fiveMin, oneHour, natureRunePrice]);
 
+  const filterOptions = useMemo(() => {
+    const total = allRows.length;
+    const pct = (count: number) => total > 0 ? ` (${Math.round(count / total * 100)}%)` : '';
+    const has1h = allRows.filter((r) => oneHour.data[String(r.item.id)]?.avgHighPrice != null).length;
+    const has5m = allRows.filter((r) => fiveMin.data[String(r.item.id)]?.avgHighPrice != null).length;
+    return [
+      { label: 'All items', value: 'all' as Filter },
+      { label: `Has 1h buy${pct(has1h)}`, value: 'has-1h' as Filter },
+      { label: `Has 5m buy${pct(has5m)}`, value: 'has-5m' as Filter },
+      { label: 'Top 25% volume', value: 'top-25pct' as Filter },
+      { label: 'Top 10% volume', value: 'top-10pct' as Filter },
+    ];
+  }, [allRows, oneHour, fiveMin]);
+
   const top50 = useMemo((): AlchemyRow[] => {
     let rows = allRows;
 
@@ -114,7 +121,7 @@ export default function Alchemy() {
         title="Alchemy"
         subtitle="Top 50 items by High Alchemy profit. Nature rune cost included."
         legend={<VolumeLegend pivot="mean" />}
-        chips={<ChipList options={FILTER_OPTIONS} value={filter} onChange={setFilter} />}
+        chips={<ChipList options={filterOptions} value={filter} onChange={setFilter} />}
       />
 
       <div className="overflow-x-auto">
