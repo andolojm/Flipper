@@ -92,15 +92,16 @@ export default function Alchemy() {
     return rows.slice(0, 50);
   }, [allRows, filter, fiveMin, oneHour]);
 
+  // Stats always from the full unfiltered set so colours are consistent across filter changes
   const { mean, minVol, maxVol } = useMemo(() => {
-    if (top50.length === 0) return { mean: 0, minVol: 0, maxVol: 0 };
-    const volumes = top50.map((r) => r.volume);
+    if (allRows.length === 0) return { mean: 0, minVol: 0, maxVol: 0 };
+    const volumes = allRows.map((r) => r.volume);
     return {
       mean: volumes.reduce((a, b) => a + b, 0) / volumes.length,
       minVol: Math.min(...volumes),
       maxVol: Math.max(...volumes),
     };
-  }, [top50]);
+  }, [allRows]);
 
   return (
     <div className="p-6">
