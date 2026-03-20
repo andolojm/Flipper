@@ -9,13 +9,14 @@ import type { MappingItem, AvgPricesResponse, LatestPricesResponse } from '@/typ
 
 const NATURE_RUNE_ID = 561;
 
-type Filter = 'all' | 'has-1h' | 'has-5m' | 'top-25pct';
+type Filter = 'all' | 'has-1h' | 'has-5m' | 'top-25pct' | 'top-10pct';
 
 const FILTER_OPTIONS: { label: string; value: Filter }[] = [
   { label: 'All items', value: 'all' },
   { label: 'Has 1h buy', value: 'has-1h' },
   { label: 'Has 5m buy', value: 'has-5m' },
-  { label: 'Top 10% volume', value: 'top-25pct' },
+  { label: 'Top 25% volume', value: 'top-25pct' },
+  { label: 'Top 10% volume', value: 'top-10pct' },
 ];
 
 function rowBg(volume: number, mean: number, minVol: number, maxVol: number) {
@@ -84,6 +85,10 @@ export default function Alchemy() {
     } else if (filter === 'has-5m') {
       rows = rows.filter((r) => fiveMin.data[String(r.item.id)]?.avgHighPrice != null);
     } else if (filter === 'top-25pct') {
+      const volumes = allRows.map((r) => r.volume).sort((a, b) => a - b);
+      const p75 = volumes[Math.floor(volumes.length * 0.75)];
+      rows = rows.filter((r) => r.volume >= p75);
+    } else if (filter === 'top-10pct') {
       const volumes = allRows.map((r) => r.volume).sort((a, b) => a - b);
       const p90 = volumes[Math.floor(volumes.length * 0.90)];
       rows = rows.filter((r) => r.volume >= p90);
