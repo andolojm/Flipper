@@ -1,12 +1,22 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import PageHeader from '@/components/PageHeader';
 import VolumeLegend from '@/components/VolumeLegend';
+import ChipList from '@/components/ChipList';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { mappingQuery, latestPricesQuery, fiveMinPricesQuery, oneHourPricesQuery } from '@/lib/queries';
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 import type { MappingItem, AvgPricesResponse, LatestPricesResponse } from '@/types/osrs';
 
 const NATURE_RUNE_ID = 561;
+
+type Filter = 'all' | 'has-1h' | 'has-5m' | 'top-25pct';
+
+const FILTER_OPTIONS: { label: string; value: Filter }[] = [
+  { label: 'All items', value: 'all' },
+  { label: 'Has 1h buy', value: 'has-1h' },
+  { label: 'Has 5m buy', value: 'has-5m' },
+  { label: 'Top 25% volume', value: 'top-25pct' },
+];
 
 function rowBg(volume: number, mean: number, minVol: number, maxVol: number) {
   if (volume < mean && mean > minVol) {
@@ -37,11 +47,14 @@ export default function Alchemy() {
   const { data: fiveMin } = useSuspenseQuery<AvgPricesResponse>(fiveMinPricesQuery);
   const { data: oneHour } = useSuspenseQuery<AvgPricesResponse>(oneHourPricesQuery);
 
+  const [filter, setFilter] = useState<Filter>('all');
+
   const natureRunePrice = useMemo(() => {
     return latest.data[String(NATURE_RUNE_ID)]?.high ?? null;
   }, [latest]);
 
-  const top50 = useMemo((): AlchemyRow[] => {
+  // All profitable alchemy rows before filtering
+  const allRows = useMemo((): AlchemyRow[] => {
     if (natureRunePrice == null) return [];
 
     return mapping
@@ -60,9 +73,24 @@ export default function Alchemy() {
           avg1h: p1h?.avgHighPrice ?? null,
         }];
       })
-      .sort((a, b) => b.margin - a.margin)
-      .slice(0, 50);
+      .sort((a, b) => b.margin - a.margin);
   }, [mapping, latest, fiveMin, oneHour, natureRunePrice]);
+
+  const top50 = useMemo((): AlchemyRow[] => {
+    let rows = allRows;
+
+    if (filter === 'has-1h') {
+      rows = rows.filter((r) => oneHour.data[String(r.item.id)]?.avgHighPrice != null);
+    } else if (filter === 'has-5m') {
+      rows = rows.filter((r) => fiveMin.data[String(r.item.id)]?.avgHighPrice != null);
+    } else if (filter === 'top-25pct') {
+      const volumes = allRows.map((r) => r.volume).sort((a, b) => a - b);
+      const p75 = volumes[Math.floor(volumes.length * 0.75)];
+      rows = rows.filter((r) => r.volume >= p75);
+    }
+
+    return rows.slice(0, 50);
+  }, [allRows, filter, fiveMin, oneHour]);
 
   const { mean, minVol, maxVol } = useMemo(() => {
     if (top50.length === 0) return { mean: 0, minVol: 0, maxVol: 0 };
@@ -80,6 +108,7 @@ export default function Alchemy() {
         title="Alchemy"
         subtitle="Top 50 items by High Alchemy profit. Nature rune cost included."
         legend={<VolumeLegend pivot="mean" />}
+        chips={<ChipList options={FILTER_OPTIONS} value={filter} onChange={setFilter} />}
       />
 
       <div className="overflow-x-auto">

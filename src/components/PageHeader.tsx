@@ -5,10 +5,11 @@ interface PageHeaderProps {
   title: string;
   subtitle?: string;
   legend?: ReactNode;
+  chips?: ReactNode;
   titleSize?: string;
 }
 
-export default function PageHeader({ title, subtitle, legend, titleSize = 'text-4xl' }: PageHeaderProps) {
+export default function PageHeader({ title, subtitle, legend, chips, titleSize = 'text-4xl' }: PageHeaderProps) {
   return (
     <div className="flex items-start gap-3 mb-10">
       <div className="flex-1">
@@ -19,6 +20,7 @@ export default function PageHeader({ title, subtitle, legend, titleSize = 'text-
         {subtitle && (
           <p className="text-zinc-500 dark:text-zinc-400">{subtitle}</p>
         )}
+        {chips && <div className="mt-3">{chips}</div>}
       </div>
       {legend}
     </div>
