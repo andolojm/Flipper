@@ -73,7 +73,7 @@ export default function Alchemy() {
           avg1h: p1h?.avgHighPrice ?? null,
         }];
       })
-      .sort((a, b) => b.margin - a.margin);
+      .sort((a, b) => b.marginPct - a.marginPct);
   }, [mapping, latest, fiveMin, oneHour, natureRunePrice]);
 
   const top50 = useMemo((): AlchemyRow[] => {
