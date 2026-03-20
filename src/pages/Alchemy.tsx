@@ -15,7 +15,7 @@ const FILTER_OPTIONS: { label: string; value: Filter }[] = [
   { label: 'All items', value: 'all' },
   { label: 'Has 1h buy', value: 'has-1h' },
   { label: 'Has 5m buy', value: 'has-5m' },
-  { label: 'Top 25% volume', value: 'top-25pct' },
+  { label: 'Top 10% volume', value: 'top-25pct' },
 ];
 
 function rowBg(volume: number, mean: number, minVol: number, maxVol: number) {
@@ -85,8 +85,8 @@ export default function Alchemy() {
       rows = rows.filter((r) => fiveMin.data[String(r.item.id)]?.avgHighPrice != null);
     } else if (filter === 'top-25pct') {
       const volumes = allRows.map((r) => r.volume).sort((a, b) => a - b);
-      const p75 = volumes[Math.floor(volumes.length * 0.75)];
-      rows = rows.filter((r) => r.volume >= p75);
+      const p90 = volumes[Math.floor(volumes.length * 0.90)];
+      rows = rows.filter((r) => r.volume >= p90);
     }
 
     return rows.slice(0, 50);
